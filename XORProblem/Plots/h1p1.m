@@ -1,6 +1,6 @@
 clear all
 hold on
-x=-1:.1:1;
+x=-2:.2:2;
 [X,Y] = meshgrid(x);
 a=1; b=1; c=-2; d=-0.5;
 Z=(-d- a * X - b * Y)/c;
