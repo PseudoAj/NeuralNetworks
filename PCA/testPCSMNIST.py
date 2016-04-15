@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-
 __author__      = 	"Ajay Krishna Teja Kavuri"
 __email__ 		= 	"ajkavuri@mix.wvu.edu"
 
 import numpy as np 
 from mnist import MNIST
 import matplotlib.pylab as plt
-import random
 
 class PCAMNIST:
 	
@@ -16,14 +13,15 @@ class PCAMNIST:
 		#Load MNIST datset
 		mnistData = MNIST('./mnistData')
 		self.imgTrain,self.lblTrain=mnistData.load_training()
-		self.imgTrainSmpl=self.imgTrain[:50000]
+		#self.imgTrainSmpl=self.imgTrain[:10000]
+		self.imgTrainSmpl = [[2.5,2.4],[0.5,0.7],[2.2,2.9],[1.9,2.2],[3.1,3.0],[2.3,2.7],[2,1.6],[1,1.1],[1.5,1.6],[1.1,0.9]]
 		np.seterr(all='warn')
 
 
 	#1. Subtract the mean because the PCA will work better
 	def subMean(self):
 		try:
-			self.sumImg = np.empty([784,])
+			self.sumImg = np.empty([2,])
 			#calculate the sum
 			for img in self.imgTrainSmpl:
 				imgArr = np.asarray(img)
@@ -39,6 +37,9 @@ class PCAMNIST:
 				imgArr = np.asarray(img)
 				self.imgTrainSmpl[index] = np.subtract(imgArr,self.meanImg).tolist()
 				index += 1
+
+			#for img in self.imgTrainSmpl:
+			#	print img
 		except:
 			print Exception	
 		
@@ -48,27 +49,26 @@ class PCAMNIST:
 		self.imgCov=[]
 		dgtArr = np.asarray(self.imgTrainSmpl).T
 		dgtCov = np.cov(dgtArr)
-		print dgtCov.shape
 		self.imgCov.append(dgtCov.tolist())
-			
+		print (np.asarray(self.imgCov)).shape
+		#for img in self.imgCov:
+		#	print img
+
 	
 	def getEigen(self):
 		self.eigVec=[]
 		self.eigVal=[]
 		dgtArr = np.asarray(self.imgCov)
 		tmpEigVal,tmpEigVec=np.linalg.eig(dgtArr)
-		self.eigVal.append(tmpEigVal.real.tolist())
-		self.eigVec.append(tmpEigVec.real.tolist())
-		print np.asarray(self.eigVec).shape
-		print np.asarray(self.eigVal).shape
-		for vec in self.eigVec.pop(0).pop(0):
-			self.drawEigV(vec)
-
+		self.eigVal.append(tmpEigVal.tolist())
+		self.eigVec.append(tmpEigVec.tolist())
+		print (np.asarray(self.eigVec)).shape
+		print (np.asarray(self.eigVal)).shape
+		
 
 	def sortEV(self):
-		self.srtdEigVec = np.asarray(self.eigVec).argsort().tolist()
-		print np.asarray(self.srtdEigVec).shape
-		#self.drawEigV(self.srtdEigVec[0][0][0])
+		self.srtdEigVec = self.eigVec
+		print (np.asarray(self.srtdEigVec)).shape
 
 
 	def plotVal(self):
@@ -79,20 +79,16 @@ class PCAMNIST:
 		"""
 
 	def drawEig(self):
-		self.srtdEigVec = self.srtdEigVec.pop(0).pop(0)
 		for vec in self.srtdEigVec[:10]:
-			print np.asarray(vec).shape
 			self.drawEigV(vec)
 		
 
 	def drawEigV(self,digit):
 		plt.figure()
-		fig=plt.imshow(np.asarray(digit).T.reshape(28,28),origin='upper')
-		fig.set_cmap('gray_r')
+		fig=plt.imshow(np.asarray(digit).reshape(28,28),origin='upper')
 		fig.axes.get_xaxis().set_visible(False)
 		fig.axes.get_yaxis().set_visible(False)
-		plt.savefig(str(random.randint(0,10000))+".png")
-		#plt.show()
+		plt.show()
 		plt.close()
 
 
@@ -111,19 +107,14 @@ class PCAMNIST:
 		for img in self.imgTrainSmpl:
 			self.drawChar(img) 
 
-	def singleStep(self):
-		self.val, self.vec = np.linalg.eig(np.cov(np.array(self.imgTrainSmpl).transpose()))
-		self.srtd = np.argsort(self.val)[::-1]
-		#for vec in self.vec.real:
-			#self.drawEigV(vec.transpose().tolist())
+
 
 
 asnmnt4=PCAMNIST()
-asnmnt4.singleStep()
-#asnmnt4.subMean()
-#asnmnt4.getCov()
-#asnmnt4.getEigen()
-#asnmnt4.sortEV()
+asnmnt4.subMean()
+asnmnt4.getCov()
+asnmnt4.getEigen()
+asnmnt4.sortEV()
 #asnmnt4.drawEig()
 #asnmnt4.plotVal()
 """
