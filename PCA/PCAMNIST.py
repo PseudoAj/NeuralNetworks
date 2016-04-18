@@ -114,8 +114,9 @@ class PCAMNIST:
 	def singleStep(self):
 		self.val, self.vec = np.linalg.eig(np.cov(np.array(self.imgTrainSmpl).transpose()))
 		self.srtd = np.argsort(self.val)[::-1]
-		#for vec in self.vec.real:
-			#self.drawEigV(vec.transpose().tolist())
+		
+		for vec in self.vec.real:
+			self.drawEigV(vec.transpose())
 
 
 asnmnt4=PCAMNIST()
