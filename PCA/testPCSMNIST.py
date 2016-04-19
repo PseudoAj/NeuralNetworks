@@ -106,15 +106,21 @@ class PCAMNIST:
 	def drawSmpl(self):
 		for img in self.imgTrainSmpl:
 			self.drawChar(img) 
+	
 
-
+	def singleStep(self):
+		self.val, self.vec = np.linalg.eig(np.cov(np.array(self.imgTrainSmpl).transpose()))
+		self.srtd = np.argsort(self.val)[::-1]
+		print self.val
 
 
 asnmnt4=PCAMNIST()
-asnmnt4.subMean()
-asnmnt4.getCov()
-asnmnt4.getEigen()
-asnmnt4.sortEV()
+asnmnt4.singleStep()
+#asnmnt4=PCAMNIST()
+#asnmnt4.subMean()
+#asnmnt4.getCov()
+#asnmnt4.getEigen()
+#asnmnt4.sortEV()
 #asnmnt4.drawEig()
 #asnmnt4.plotVal()
 """
