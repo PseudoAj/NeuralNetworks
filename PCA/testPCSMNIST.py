@@ -13,7 +13,7 @@ class PCAMNIST:
 		#Load MNIST datset
 		mnistData = MNIST('./mnistData')
 		self.imgTrain,self.lblTrain=mnistData.load_training()
-		#self.imgTrainSmpl=self.imgTrain[:10000]
+		#self.imgTrainSmpl=self.imgTrain[:50000]
 		self.imgTrainSmpl = [[2.5,2.4],[0.5,0.7],[2.2,2.9],[1.9,2.2],[3.1,3.0],[2.3,2.7],[2,1.6],[1,1.1],[1.5,1.6],[1.1,0.9]]
 		np.seterr(all='warn')
 
@@ -39,7 +39,7 @@ class PCAMNIST:
 				index += 1
 
 			#for img in self.imgTrainSmpl:
-			#	print img
+				#print img
 		except:
 			print Exception	
 		
@@ -49,12 +49,11 @@ class PCAMNIST:
 		self.imgCov=[]
 		dgtArr = np.asarray(self.imgTrainSmpl).T
 		dgtCov = np.cov(dgtArr)
-		self.imgCov.append(dgtCov.tolist())
-		print (np.asarray(self.imgCov)).shape
+		self.imgCov.append(dgtCov)
 		#for img in self.imgCov:
-		#	print img
+			#print img
 
-	
+	#3. get the eigen vectors from the covariance matrix
 	def getEigen(self):
 		self.eigVec=[]
 		self.eigVal=[]
@@ -62,14 +61,25 @@ class PCAMNIST:
 		tmpEigVal,tmpEigVec=np.linalg.eig(dgtArr)
 		self.eigVal.append(tmpEigVal.tolist())
 		self.eigVec.append(tmpEigVec.tolist())
-		print (np.asarray(self.eigVec)).shape
-		print (np.asarray(self.eigVal)).shape
+
+		print "\nEigen values:\n"
+		for img in self.eigVal:
+			print img
+
+		print "\nEigen vectors:\n"
+		for img in self.eigVec:
+			print img
 		
 
 	def sortEV(self):
-		self.srtdEigVec = self.eigVec
-		print (np.asarray(self.srtdEigVec)).shape
-
+		self.eigValArr = np.asarray(self.eigVal[0][0])
+		self.eigVecArr = np.asarray(self.eigVec[0][0])
+		self.srtdInd = np.argsort(self.eigValArr)[::-1]
+		self.srtdEigVecArr = self.eigVecArr[self.srtdInd]
+		self.srtdEigVal = self.srtdEigVecArr.real.tolist()
+		for img in self.srtdEigVal:
+			print img
+		#self.drawEig()
 
 	def plotVal(self):
 		"""
@@ -114,13 +124,13 @@ class PCAMNIST:
 		print self.val
 
 
-asnmnt4=PCAMNIST()
-asnmnt4.singleStep()
 #asnmnt4=PCAMNIST()
+#asnmnt4.singleStep()
+asnmnt4=PCAMNIST()
 #asnmnt4.subMean()
-#asnmnt4.getCov()
-#asnmnt4.getEigen()
-#asnmnt4.sortEV()
+asnmnt4.getCov()
+asnmnt4.getEigen()
+asnmnt4.sortEV()
 #asnmnt4.drawEig()
 #asnmnt4.plotVal()
 """
