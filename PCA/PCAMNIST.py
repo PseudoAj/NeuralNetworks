@@ -79,7 +79,7 @@ class PCAMNIST:
 		self.srtdEigVecArr = self.eigVecArr[self.srtdInd]
 		self.srtdEigVec = self.srtdEigVecArr.real.tolist()
 		#print self.srtdEigValArr[0]
-		print np.asarray(self.eigVec).shape
+		#print np.asarray(self.eigVec).shape
 		#print self.eigVec[self.srtdInd[0]]
 		#print np.asarray(self.srtdEigVec).shape
 		#for img in self.srtdEigVecArr:
@@ -89,18 +89,51 @@ class PCAMNIST:
 	#5. Plot the values
 	def plotVal(self):
 		plt.figure()
+		plt.xlabel('Eigen count')
+		plt.ylabel('Eigen value')
+		plt.title('All Eigen values in descending order')
 		x = np.arange(784)
-		plt.plot(x,abs(self.srtdEigValArr[:784]))
+		plt.plot(x,abs(self.srtdEigValArr[:784]),'--bo')
 		plt.savefig("Plot"+str(random.randint(0,10000))+".png")
 		plt.close()
 
+	#6. Project a random image on to the eigen vectors
+	def projectDigit(self,numFtrs):
+		randIndx = random.randint(0,60000)
+		self.drawChar(self.imgTrainSmpl[randIndx])
+		self.randDgtArray = np.asarray(self.imgTrainSmpl[randIndx])
+		self.projArr = self.srtdEigVecArr.T[:numFtrs]
+		self.projFtrs = np.dot(self.randDgtArray,self.projArr.T)
+		self.reconsDgt = np.dot(self.projFtrs,self.projArr)
+		self.drawChar(self.reconsDgt)
+		self.diffRecons = np.subtract(self.randDgtArray , self.reconsDgt)
+		self.drawChar(self.diffRecons)
+		print self.randDgtArray.shape
+		print self.projArr.T.shape
+		print self.projFtrs.shape
+		print self.reconsDgt.shape
+		print self.diffRecons.shape
+
+	#Plot the feature values
+	def plotFtrs(self):
+		plt.figure()
+		plt.xlabel('Feature Vector count')
+		plt.ylabel('Feature Vector value')
+		plt.title('Features Vector plot')
+		#x = np.arange(784)
+		plt.plot(self.projFtrs,'--bo')
+		plt.savefig("Plot"+str(random.randint(0,10000))+".png")
+		plt.close()
+		
+
+	#Function for plotting the eigen vectors
 	def drawEig(self):
-		for vec in self.srtdEigVecArr.T[:20]:
+		for vec in self.srtdEigVecArr.T[:5]:
 			self.drawEigV(vec)
 		#for x in xrange(10):
 			#self.drawEigV((self.srtdEigVecArr[:,x]).T)
 		
-
+	#Function for plotting specific vector
 	def drawEigV(self,digit):
 		plt.figure()
 		fig=plt.imshow(np.asarray(digit).reshape(28,28),origin='upper')
@@ -110,18 +143,18 @@ class PCAMNIST:
 		plt.savefig("Eigen"+str(random.randint(0,10000))+".png")
 		plt.close()
 
-
-
+	#Draw a given character
 	def drawChar(self,digit):
 		plt.figure()
-		fig=plt.imshow(np.asarray(digit).reshape(28,28),clim=(-1,1.0),origin='upper')
+		fig=plt.imshow(np.asarray(digit).reshape(28,28),origin='upper')
 		fig.set_cmap('gray_r')
 		fig.axes.get_xaxis().set_visible(False)
 		fig.axes.get_yaxis().set_visible(False)
 		plt.show()
+		#plt.savefig("Digit"+str(random.randint(0,10000))+".png")
 		plt.close()
 
-
+	#Draw all images in sample
 	def drawSmpl(self):
 		for img in self.imgTrainSmpl:
 			self.drawChar(img) 
@@ -132,6 +165,8 @@ asnmnt4.subMean()
 asnmnt4.getCov()
 asnmnt4.getEigen()
 asnmnt4.sortEV()
-asnmnt4.drawEig()
+asnmnt4.projectDigit(20)
+asnmnt4.plotFtrs()
+#asnmnt4.drawEig()
 #asnmnt4.plotVal()
         
